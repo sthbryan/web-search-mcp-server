@@ -1,6 +1,6 @@
 {
   "name": "@sthbryan/web-search-mcp",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "type": "module",
   "description": "Lightweight MCP server for web search and scraping",
   "main": "./dist/index.js",
