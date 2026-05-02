@@ -1,44 +1,40 @@
 # Web Search MCP Server
 
-A lightweight MCP (Model Context Protocol) server for web search and scraping. No headless browser or complex dependencies required.
+> A Model Context Protocol server for web search and scraping using DuckDuckGo
+
+## Overview
+
+This MCP server provides tools for AI agents to search the web, fetch page content, and query specific elements from pages. It uses **DuckDuckGo** as the primary search engine with a hybrid approach:
+
+- **API search** for fast, direct results
+- **HTML scraping** as fallback when API is unavailable
+- **Native fetch** for page retrieval and element queries
+
+No headless browser or complex dependencies required.
 
 ## Tools
 
-### search
-Search the web using DuckDuckGo. Tries API first, falls back to HTML scraping if needed.
+### `search` — Search DuckDuckGo
 
 ```json
-{
-  "name": "search",
-  "arguments": {
-    "query": "javascript frameworks 2024",
-    "limit": 10
-  }
-}
+{ "query": "rust programming", "limit": 5 }```
 ```
 
 **Response:**
 ```json
 {
-  "query": "javascript frameworks 2024",
+  "query": "rust programming language",
   "source": "api",
   "results": [
-    { "title": "React", "url": "https://react.dev", "snippet": "A JavaScript library..." }
+    { "title": "The Rust Programming Language", "url": "https://rust-lang.org" }
   ]
 }
 ```
 
-### fetch_page
-Fetch a web page and convert to HTML, markdown, or plain text.
+### `fetch_page` — Get page content (HTML/markdown/text)
 
 ```json
-{
-  "name": "fetch_page",
-  "arguments": {
-    "url": "https://example.com",
-    "type": "markdown"
-  }
-}
+{ "url": "https://example.com", "type": "markdown" }
 ```
 
 **Response:**
@@ -52,30 +48,31 @@ Fetch a web page and convert to HTML, markdown, or plain text.
 }
 ```
 
-### query
-Query specific elements from a page using CSS selectors.
+### `query` — Extract elements via CSS selector + text filter
 
 ```json
 {
-  "name": "query",
-  "arguments": {
-    "url": "https://news.ycombinator.com",
-    "selector": ".title",
-    "text": "tech"
-  }
+    "url": "https://example.com",
+    "selector": "h1, h2",
+    "text": "intro"
 }
 ```
 
 **Response:**
 ```json
 {
-  "url": "https://news.ycombinator.com",
+  "url": "https://example.com",
   "source": "native",
-  "selector": ".title",
-  "text": "tech",
-  "result": ["Tech News", "Technology Trends"]
+  "selector": "h1, h2",
+  "text": "intro",
+  "result": ["Introduction", "Getting Started"]
 }
 ```
+
+## Requirements
+
+- Node.js 18+ or Bun
+- Internet connection (for DuckDuckGo API/scraping)
 
 ## Installation
 
@@ -85,17 +82,9 @@ bun install
 
 # Build for production
 bun run build
-
-# Run directly (development)
-bun run start
-
-# Or install globally
-bun add -g web-search-mcp-server
 ```
 
-## Usage with Claude Desktop
-
-Add to your `claude_desktop_config.json`:
+Add to your MCP servers config:
 
 ```json
 {
@@ -108,36 +97,69 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
+> For client-specific configuration, see [INSTALL.md](./INSTALL.md).
+
 ## Architecture
 
 ```
-src/
-├── index.ts           # MCP server entry point
-├── tools/
-│   ├── search/        # search tool (API + scraping)
-│   ├── fetch/         # fetch_page tool
-│   └── query/         # query tool
-├── schemas/           # Zod input validation
-├── types/             # TypeScript interfaces
-└── utils/
-    └── clean.ts       # HTML cleaning utilities
+┌─────────────────────────────────────────────────────────────┐
+│                        MCP Client                           │
+│                       Coding Agent                          │
+└─────────────────────────┬───────────────────────────────────┘
+                          │ JSON-RPC
+                          ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   Web Search MCP Server                     │
+│        ┌─────────┐   ┌─────────┐   ┌─────────┐              │
+│        │  search │   │  fetch  │   │  query  │  ← Tools     │
+│        └───┬─────┘   └───┬─────┘   └───┬─────┘              │
+│            │             │             │                    │
+│            ▼             ▼             ▼                    │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │                    searchHandler()                      ││
+│  │              (parallel API + scraping)                  ││
+│  └──────────────────────────┬──────────────────────────────┘│
+│                             │                               │
+│                ┌────────────┴────────────┐                  │
+│                ▼                         ▼                  │
+│         ┌────────────┐           ┌────────────┐             │
+│         │ DuckDuckGo │           │   Native   │             │
+│         │    API     │           │   fetch    │             │
+│         └────────────┘           └────────────┘             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## How Search Works
+
+```
+User Query: "MCP protocol"
+     │
+     ├─► DuckDuckGo API ──► Fast results
+     │                         │
+     └─► DuckDuckGo Lite ──► HTML scraping
+         (on fallback)          │
+                                ▼
+                         ┌────────────┐
+                         │   Merge    │
+                         │ + Dedupe   │
+                         └────────────┘
+                                │
+                                ▼
+                         Final Results
 ```
 
 ## Development
 
 ```bash
-bun run dev      # Watch mode
-bun run build   # Build to dist/
-bun test        # Run tests
+# Run in development mode
+bun run dev
+
+# Build for production
+bun run build
+
+# Type check
+bun run check
 ```
-
-## Dependencies
-
-- `@modelcontextprotocol/sdk` - MCP protocol
-- `cheerio` - HTML parsing
-- `turndown` - HTML to Markdown
-- `fuse.js` - Fuzzy text matching
-- `zod` - Schema validation
 
 ## License
 
