@@ -17,7 +17,7 @@ No headless browser or complex dependencies required.
 ### `search` — Search DuckDuckGo
 
 ```json
-{ "query": "rust programming", "limit": 5 }```
+{ "query": "rust programming", "limit": 5 }
 ```
 
 **Response:**
@@ -90,8 +90,8 @@ Add to your MCP servers config:
 {
   "mcpServers": {
     "web-search": {
-      "command": "bun",
-      "args": ["/path/to/web-search-mcp-server/dist/index.js"]
+      "command": "bunx",
+      "args": ["-y", "@sthbryan/web-search-mcp"]
     }
   }
 }
