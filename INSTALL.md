@@ -9,7 +9,7 @@
   "mcpServers": {
     "web-search": {
       "command": "bunx",
-      "args": ["web-search-mcp-server"]
+      "args": ["-y", "@sthbryan/web-search-mcp"]
     }
   }
 }
@@ -35,7 +35,7 @@
   "mcpServers": {
     "web-search": {
       "command": "npx",
-      "args": ["-y", "web-search-mcp-server"]
+      "args": ["-y", "@sthbryan/web-search-mcp"]
     }
   }
 }
@@ -79,7 +79,7 @@ bun run build
     "servers": {
       "web-search": {
         "command": "bunx",
-        "args": ["web-search-mcp-server"]
+        "args": ["-y", "@sthbryan/web-search-mcp"]
       }
     }
   }
@@ -102,13 +102,38 @@ bun run build
     "web-search": {
       "type": "stdio",
       "command": "bunx",
-      "args": ["web-search-mcp-server"]
+      "args": ["-y", "@sthbryan/web-search-mcp"]
     }
   }
 }
 ```
 
 Cursor also supports UI configuration: Settings → Features → Model Context Protocol
+
+---
+
+### OpenCode
+
+| OS | Path |
+|----|------|
+| macOS | `~/.config/opencode/opencode.json` |
+| Linux | `~/.config/opencode/opencode.json` |
+| Windows | `%APPDATA%\opencode\opencode.json` |
+
+```json
+{
+  "mcp": {
+    "obscura": {
+      "type": "local",
+      "command": ["bunx", "-y", "@sthbryan/web-search-mcp"],
+      "environment": {
+        "OBSCURA_PATH": "/usr/local/bin/obscura"
+      },
+      "enabled": true
+    }
+  }
+}
+```
 
 ---
 
@@ -125,7 +150,7 @@ Cursor also supports UI configuration: Settings → Features → Model Context P
   "mcpServers": {
     "web-search": {
       "command": "bunx",
-      "args": ["web-search-mcp-server"]
+      "args": ["-y", "@sthbryan/web-search-mcp"]
     }
   }
 }
@@ -139,16 +164,40 @@ claude mcp list
 
 ---
 
+### Codex
+
+| OS | Path |
+|----|------|
+| macOS | `~/.codex/config.json` |
+| Linux | `~/.codex/config.json` |
+| Windows | `%USERPROFILE%\.codex\config.json` |
+
+```json
+{
+  "mcpServers": {
+    "obscura": {
+      "command": "bunx",
+      "args": ["-y", "@sthbryan/web-search-mcp"]
+    }
+  }
+}
+```
+
+---
+
 ### Pi
 
-Add to your MCP servers config (`~/.pi/agent/mcp.json`):
+Add to your MCP servers config:
+To use MCP servers with Pi, you need to install the `pi-mcp-adapter` package and configure it to connect to the Obscura MCP server.
+Link to package: https://pi.dev/packages/pi-mcp-adapter
+
 
 ```json
 {
   "mcpServers": {
     "web-search": {
       "command": "bunx",
-      "args": ["web-search-mcp-server"]
+      "args": ["-y", "@sthbryan/web-search-mcp"]
     }
   }
 }
