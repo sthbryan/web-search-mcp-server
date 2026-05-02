@@ -6,6 +6,6 @@ export interface SearchResult {
 
 export interface SearchResponse {
 	query: string;
-	source: 'api' | 'scraping';
+	source: 'api' | 'scraping' | 'hybrid';
 	results: SearchResult[];
 }
