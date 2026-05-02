@@ -20,7 +20,6 @@ const server = new Server(
 	}
 );
 
-// Register tools
 server.setRequestHandler(ListToolsRequestSchema, async () => {
 	return {
 		tools: [
@@ -93,7 +92,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 	};
 });
 
-// Handle tool calls
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
 	const { name, arguments: args } = request.params;
 
@@ -135,7 +133,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 	}
 });
 
-// Start server
 async function main() {
 	const transport = new StdioServerTransport();
 	await server.connect(transport);

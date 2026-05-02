@@ -27,7 +27,6 @@ export async function searchWithScraping(
 
 	const results: SearchResult[] = [];
 
-	// DuckDuckGo Lite uses result class for links
 	$(".result a[href^='http']").each((_, el) => {
 		if (results.length >= limit) return false;
 

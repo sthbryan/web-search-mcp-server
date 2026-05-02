@@ -34,11 +34,10 @@ export async function searchWithAPI(
 		throw new Error(`DuckDuckGo API failed: ${response.status}`);
 	}
 
-	const data: DuckDuckGoResponse = await response.json();
+	const data = (await response.json()) as DuckDuckGoResponse;
 
 	const results: SearchResult[] = [];
 
-	// Add main result if available
 	if (data.AbstractURL) {
 		results.push({
 			title: data.Heading || query,
@@ -47,7 +46,6 @@ export async function searchWithAPI(
 		});
 	}
 
-	// Add related topics
 	if (data.RelatedTopics) {
 		for (const topic of data.RelatedTopics) {
 			if (topic.Text && topic.FirstURL && results.length < limit) {

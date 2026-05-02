@@ -40,11 +40,9 @@ export async function queryPage(
 		});
 		result = elements;
 	} else {
-		// No selector, get body text
 		result = [$('body').text().trim()];
 	}
 
-	// Apply text filter if provided (fuzzy match)
 	if (text && result.length > 0) {
 		const fuse = new Fuse(result, {
 			threshold: 0.4,

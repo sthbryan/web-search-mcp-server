@@ -18,7 +18,6 @@ export async function searchHandler(args: unknown): Promise<SearchResponse> {
 		console.error('API search failed:', apiError);
 	}
 
-	// Fallback to scraping
 	try {
 		const results = await searchWithScraping(query, limit);
 		return { query, source: 'scraping', results };

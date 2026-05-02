@@ -7,15 +7,12 @@ import * as cheerio from 'cheerio';
 export function cleanHtml(html: string): string {
 	const $ = cheerio.load(html);
 
-	// Remove unwanted elements
 	$('script, style, nav, footer, header, aside').remove();
 
-	// Remove common ad/tracking elements
 	$(
 		"[class*='ad-'], [class*='advertisement'], [id*='ad-'], [id*='sidebar']"
 	).remove();
 
-	// Remove comments
 	$.root()
 		.contents()
 		.filter((_, el) => el.type === 'comment')
