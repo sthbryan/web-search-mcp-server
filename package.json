@@ -1,0 +1,34 @@
+{
+  "name": "web-search-mcp-server",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Lightweight MCP server for web search and scraping",
+  "main": "./dist/index.js",
+  "bin": {
+    "web-search-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ./dist --target node",
+    "start": "bun run src/index.ts",
+    "dev": "bun --watch src/index.ts",
+    "test": "bun test",
+    "test:unit": "bun test tests/unit",
+    "test:integration": "bun test tests/integration",
+    "lint": "npx biome check .",
+    "lint:fix": "npx biome check --write .",
+    "check": "npx biome ci ."
+  },
+  "keywords": ["mcp", "search", "scraping", "web", "duckduckgo"],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "cheerio": "^1.0.0",
+    "turndown": "^7.2.4",
+    "fuse.js": "^7.3.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.14",
+    "@types/turndown": "^5.0.0",
+    "bun-types": "^1.0.0"
+  }
+}
