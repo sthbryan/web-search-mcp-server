@@ -1,10 +1,9 @@
 import * as cheerio from 'cheerio';
+import { DUCKDUCKGO_LITE } from '../../config/endpoints.js';
 import type { SearchResult } from '../../types/search.js';
 
-const DUCKDUCKGO_LITE = 'https://lite.duckduckgo.com/50x/';
-
 /**
- * Search using DuckDuckGo Lite HTML scraping as fallback.
+ * Search using DuckDuckGo Lite HTML scraping.
  */
 export async function searchWithScraping(
 	query: string,
@@ -14,7 +13,10 @@ export async function searchWithScraping(
 
 	const response = await fetch(url, {
 		headers: {
-			'User-Agent': 'Mozilla/5.0 (compatible; web-search-mcp-server/0.1.0)',
+			'User-Agent':
+				'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+			Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+			'Accept-Language': 'en-US,en;q=0.9',
 		},
 	});
 
@@ -27,22 +29,54 @@ export async function searchWithScraping(
 
 	const results: SearchResult[] = [];
 
-	$(".result a[href^='http']").each((_, el) => {
-		if (results.length >= limit) return false;
+	$('.result-link').each((_, el) => {
+		if (results.length >= limit) return;
 
-		const $el = $(el);
-		const href = $el.attr('href');
-		const text = $el.text().trim();
+		const href = $(el).attr('href') || '';
+		const title = $(el).text().trim();
 
-		if (href && text && !href.includes('duckduckgo.com')) {
-			results.push({
-				title: text,
-				url: href,
-			});
+		const match = href.match(/uddg=([^&]+)/);
+		if (match) {
+			const decodedUrl = decodeURIComponent(match[1]);
+			if (title && decodedUrl.startsWith('http')) {
+				results.push({ title, url: decodedUrl });
+			}
 		}
-
-		return true;
 	});
+
+	if (results.length === 0) {
+		$('a[href*="uddg="]').each((_, el) => {
+			if (results.length >= limit) return;
+
+			const href = $(el).attr('href') || '';
+			const title = $(el).text().trim();
+
+			const match = href.match(/uddg=([^&]+)/);
+			if (match) {
+				const decodedUrl = decodeURIComponent(match[1]);
+				if (title && decodedUrl.startsWith('http')) {
+					results.push({ title, url: decodedUrl });
+				}
+			}
+		});
+	}
+
+	if (results.length === 0) {
+		$('a[href^="http"]').each((_, el) => {
+			if (results.length >= limit) return;
+
+			const href = $(el).attr('href') || '';
+			const title = $(el).text().trim();
+
+			if (href && !href.includes('duckduckgo.com') && title) {
+				results.push({ title, url: href });
+			}
+		});
+	}
+
+	if (results.length === 0) {
+		throw new Error('no results');
+	}
 
 	return results;
 }

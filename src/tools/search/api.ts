@@ -1,6 +1,5 @@
+import { DUCKDUCKGO_API } from '../../config/endpoints.js';
 import type { SearchResult } from '../../types/search.js';
-
-const DUCKDUCKGO_API = 'https://api.duckduckgo.com/';
 
 interface DuckDuckGoResponse {
 	AbstractURL?: string;
