@@ -2,6 +2,15 @@
   "name": "@sthbryan/web-search-mcp",
   "version": "0.2.1",
   "type": "module",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sthbryan/web-search-mcp-server"
+  },
+  "author": {
+    "name": "sthbryan",
+    "url": "https://justcallmebryan.com"
+  },
   "description": "Lightweight MCP server for web search and scraping",
   "main": "./dist/index.js",
   "bin": {
