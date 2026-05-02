@@ -17,7 +17,8 @@
     "lint": "bun biome check .",
     "lint:fix": "bun biome check --write .",
     "check": "bun biome ci .",
-    "prepublish": "bun run build"
+    "prepublish": "bun run build",
+    "postinstall": "[ -d .git ] && lefthook install || true"
   },
   "keywords": [
     "mcp",
