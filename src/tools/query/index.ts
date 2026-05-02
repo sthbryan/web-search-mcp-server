@@ -1,1 +1,1 @@
-export { queryHandler, queryPage } from './query.js';
+export { queryHandler, queryPage } from "./query.js";
