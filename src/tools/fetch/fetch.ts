@@ -1,5 +1,5 @@
 import TurndownService from "turndown";
-import { FetchSchema } from "../../schemas/fetch.js";
+import { fetchInputSchema } from "../../schemas/fetch.js";
 import type { FetchResponse } from "../../types/fetch.js";
 import { cleanHtml, htmlToText } from "../../utils/clean.js";
 
@@ -56,6 +56,6 @@ export async function fetchPage(
  * Handler for fetch_page tool.
  */
 export async function fetchHandler(args: unknown): Promise<FetchResponse> {
-  const { url, type } = FetchSchema.parse(args);
+  const { url, type } = fetchInputSchema.parse(args);
   return fetchPage(url, type);
 }

@@ -1,6 +1,6 @@
 import * as cheerio from "cheerio";
 import Fuse from "fuse.js";
-import { QuerySchema } from "../../schemas/query.js";
+import { queryInputSchema } from "../../schemas/query.js";
 import type { QueryResponse } from "../../types/query.js";
 import { cleanHtml } from "../../utils/clean.js";
 
@@ -65,6 +65,6 @@ export async function queryPage(
  * Handler for query tool.
  */
 export async function queryHandler(args: unknown): Promise<QueryResponse> {
-  const { url, selector, text } = QuerySchema.parse(args);
+  const { url, selector, text } = queryInputSchema.parse(args);
   return queryPage(url, selector, text);
 }

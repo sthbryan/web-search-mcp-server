@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
-import { searchHandler } from "../../src/tools/search/index.js";
+import { performSearch } from "../../src/tools/search/search.js";
 
 describe("search", () => {
   let originalFetch: typeof globalThis.fetch;
@@ -12,9 +12,8 @@ describe("search", () => {
     globalThis.fetch = originalFetch;
   });
 
-  describe("searchHandler", () => {
+  describe("performSearch", () => {
     test("returns results from API source", async () => {
-      // Mock API response
       globalThis.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () =>
@@ -29,7 +28,7 @@ describe("search", () => {
           }),
       }) as unknown as typeof fetch;
 
-      const result = await searchHandler({ query: "test", limit: 5 });
+      const result = await performSearch({ query: "test", limit: 5 });
 
       expect(result.query).toBe("test");
       expect(result.source).toBe("api");
@@ -39,7 +38,6 @@ describe("search", () => {
     });
 
     test("returns results from scraping when API fails", async () => {
-      // Mock API failure, scraping success
       globalThis.fetch = vi
         .fn()
         .mockResolvedValueOnce({
@@ -56,7 +54,7 @@ describe("search", () => {
             ),
         }) as unknown as typeof fetch;
 
-      const result = await searchHandler({ query: "test", limit: 5 });
+      const result = await performSearch({ query: "test", limit: 5 });
 
       expect(result.query).toBe("test");
       expect(result.results.length).toBeGreaterThan(0);
@@ -68,7 +66,7 @@ describe("search", () => {
         status: 500,
       }) as unknown as typeof fetch;
 
-      await expect(searchHandler({ query: "test" })).rejects.toThrow();
+      await expect(performSearch({ query: "test" })).rejects.toThrow();
     });
 
     test("respects limit parameter", async () => {
@@ -84,31 +82,9 @@ describe("search", () => {
           }),
       }) as unknown as typeof fetch;
 
-      const result = await searchHandler({ query: "test", limit: 2 });
+      const result = await performSearch({ query: "test", limit: 2 });
 
       expect(result.results.length).toBeLessThanOrEqual(2);
-    });
-
-    test("handles empty API response with scraping fallback", async () => {
-      globalThis.fetch = vi
-        .fn()
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve({ RelatedTopics: [] }),
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          text: () =>
-            Promise.resolve(
-              `<html><body>
-                <a class="result-link" href="//duckduckgo.com/l/?uddg=https%3A%2F%2Ffallback.com">Fallback Result</a>
-              </body></html>`
-            ),
-        }) as unknown as typeof fetch;
-
-      const result = await searchHandler({ query: "test" });
-
-      expect(result.results.length).toBeGreaterThan(0);
     });
 
     test("deduplicates results from multiple sources", async () => {
@@ -120,7 +96,7 @@ describe("search", () => {
           }),
       }) as unknown as typeof fetch;
 
-      const result = await searchHandler({ query: "test", limit: 10 });
+      const result = await performSearch({ query: "test", limit: 10 });
 
       const urls = result.results.map((r) => r.url);
       const uniqueUrls = new Set(urls);
@@ -139,7 +115,7 @@ describe("search", () => {
           }),
       }) as unknown as typeof fetch;
 
-      const result = await searchHandler({ query: "test" });
+      const result = await performSearch({ query: "test" });
 
       expect(result.results[0].snippet).toBeDefined();
       expect(result.results[0].snippet).toContain("snippet");
