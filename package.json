@@ -19,7 +19,13 @@
     "check": "bun biome ci .",
     "postinstall": "lefthook install"
   },
-  "keywords": ["mcp", "search", "scraping", "web", "duckduckgo"],
+  "keywords": [
+    "mcp",
+    "search",
+    "scraping",
+    "web",
+    "duckduckgo"
+  ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "cheerio": "^1.0.0",
